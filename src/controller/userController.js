@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import User from "../models/userModel.js";
 import HttpResponse from "../utils/httpResponse.js";
 import genAI from "../config/gemini.js";
@@ -11,7 +12,7 @@ class UserController {
       // Check if user already exists
       const existingUser = await User.findOne({
         where: {
-          [sequelize.Op.or]: [{ email }, { cpf }],
+          [Op.or]: [{ email }, { cpf }],
         },
       });
 

@@ -130,8 +130,16 @@ User.findByDocument = async function (documentType, documentNumber) {
     },
   });
 };
+User.findByDocument = async function (documentType, documentNumber) {
+  return await User.findOne({
+    where: {
+      documentType,
+      documentNumber,
+    },
+  });
+};
 
 // Sync model with database
-// User.sync({ alter: true }); // Uncomment this in development to update table schema
+User.sync({ alter: true }); // Uncomment this in development to update table schema
 
 export default User;
