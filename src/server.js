@@ -1,6 +1,7 @@
 import app from "./app.js";
 import moment from "moment";
 import dotenv from "dotenv";
+import sequelize from "./config/database.js";
 
 dotenv.config();
 
