@@ -1,4 +1,7 @@
 import { Op } from "sequelize";
+import fs from "fs";
+import axios from "axios";
+import cloudinary from "../config/cloudinary.js";
 import User from "../models/userModel.js";
 import HttpResponse from "../utils/httpResponse.js";
 import genAI from "../config/gemini.js";
@@ -117,42 +120,64 @@ class UserController {
     try {
       const { id } = req.params;
       const { documentType, documentNumber } = req.body;
-      const documentImageUrl = req.file?.path; // Assuming you're using multer or similar
+      const fileBuffer = req.file?.buffer; // Agora vem da memória
 
-      if (!documentImageUrl) {
+      if (!fileBuffer) {
         return HttpResponse.badRequest(
           res,
           "Imagem do documento é obrigatória"
         );
       }
 
-      const user = await User.findByPk(id);
+      // Upload para o Cloudinary usando o buffer
+      const uploadResult = await cloudinary.uploader.upload_stream(
+        {
+          folder: "documents",
+          resource_type: "image",
+        },
+        async (error, result) => {
+          if (error) {
+            console.error("Cloudinary upload error:", error);
+            return HttpResponse.serverError(
+              res,
+              "Erro ao enviar para o Cloudinary",
+              {
+                error: error.message,
+              }
+            );
+          }
 
-      if (!user) {
-        return HttpResponse.notFound(res, "Usuário não encontrado");
-      }
+          const documentImageUrl = result.secure_url;
+          const user = await User.findByPk(id);
 
-      // Update document information
-      await user.update({
-        documentType,
-        documentNumber,
-        documentImageUrl,
-        documentVerified: false, // Will be verified by AI later
-      });
+          if (!user) {
+            return HttpResponse.notFound(res, "Usuário não encontrado");
+          }
 
-      // Trigger document verification with AI (this would be a separate process in production)
-      // For demo purposes, we'll simulate AI verification
-      const verificationResult = await UserController.verifyDocumentWithAI(
-        user.id,
-        documentImageUrl,
-        documentType,
-        documentNumber,
-        user.name
+          await user.update({
+            documentType,
+            documentNumber,
+            documentImageUrl,
+            documentVerified: false,
+          });
+
+          // Continue com a verificação Gemini normalmente
+          const verificationResult = await UserController.verifyDocumentWithAI(
+            user.id,
+            documentImageUrl,
+            documentType,
+            documentNumber,
+            user.name
+          );
+
+          return HttpResponse.success(res, "Documento enviado com sucesso", {
+            documentStatus: verificationResult,
+          });
+        }
       );
 
-      return HttpResponse.success(res, "Documento enviado com sucesso", {
-        documentStatus: verificationResult,
-      });
+      // Escreve o buffer no stream do Cloudinary
+      uploadResult.end(fileBuffer);
     } catch (error) {
       console.error("Error uploading document:", error);
       return HttpResponse.serverError(res, "Erro ao enviar documento", {
@@ -170,10 +195,6 @@ class UserController {
     userName
   ) {
     try {
-      // In a real implementation, this would call an OCR service like Google Vision
-      // For demo purposes, we'll use Gemini to analyze the document
-
-      // Prepare prompt for Gemini
       const prompt = `
         Analyze this ${documentType} document:
         - Check if the name "${userName}" appears on the document
@@ -189,10 +210,20 @@ class UserController {
         }
       `;
 
+      let imageBuffer;
+      if (imageUrl.startsWith("http")) {
+        const response = await axios.get(imageUrl, {
+          responseType: "arraybuffer",
+        });
+        imageBuffer = Buffer.from(response.data, "binary");
+      } else {
+        imageBuffer = fs.readFileSync(imageUrl);
+      }
+      const imageBase64 = imageBuffer.toString("base64");
+
       let result;
 
       try {
-        // Call Gemini API with the image and prompt
         const response = await genAI.models.generateContent({
           model: "gemini-2.0-flash",
           contents: [
@@ -200,28 +231,32 @@ class UserController {
               role: "user",
               parts: [
                 { text: prompt },
-                { fileData: { mimeType: "image/jpeg", data: imageUrl } },
+                {
+                  inlineData: {
+                    mimeType: "image/jpeg",
+                    data: imageBase64,
+                  },
+                },
               ],
             },
           ],
         });
 
-        // Parse the response
-        const responseText =
+        let responseText =
           response.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+        // Remove Markdown code block if present
+        responseText = responseText.replace(/```json|```/g, "").trim();
         result = JSON.parse(responseText);
       } catch (aiError) {
         console.error("Error calling Gemini API:", aiError);
-        // Fallback to simulation if AI call fails
         result = {
-          nameMatch: Math.random() > 0.2, // 80% chance of success
+          nameMatch: Math.random() > 0.2,
           numberMatch: Math.random() > 0.2,
           appearsToBeLegitimate: Math.random() > 0.1,
           confidence: 0.7 + Math.random() * 0.3,
         };
       }
 
-      // Update user's document verification status
       const verified =
         result.nameMatch &&
         result.numberMatch &&
