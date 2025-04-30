@@ -7,7 +7,16 @@ class UserController {
   // Create a new user
   static async createUser(req, res) {
     try {
-      const { name, email, cpf, address } = req.body;
+      const {
+        name,
+        email,
+        cpf,
+        address,
+        esportsInterests,
+        attendedEvents,
+        participatedActivities,
+        purchases,
+      } = req.body;
 
       // Check if user already exists
       const existingUser = await User.findOne({
@@ -19,7 +28,7 @@ class UserController {
       if (existingUser) {
         return HttpResponse.badRequest(
           res,
-          "User already exists with this email or CPF"
+          "Já existe um usuário com este e-mail ou CPF"
         );
       }
 
@@ -29,9 +38,13 @@ class UserController {
         email,
         cpf,
         address,
+        esportsInterests,
+        attendedEvents,
+        participatedActivities,
+        purchases,
       });
 
-      return HttpResponse.created(res, "User created successfully", {
+      return HttpResponse.created(res, "Usuário criado com sucesso", {
         user: {
           id: newUser.id,
           name: newUser.name,
@@ -40,7 +53,7 @@ class UserController {
       });
     } catch (error) {
       console.error("Error creating user:", error);
-      return HttpResponse.serverError(res, "Error creating user", {
+      return HttpResponse.serverError(res, "Erro ao criar usuário", {
         error: error.message,
       });
     }
@@ -54,13 +67,15 @@ class UserController {
       const user = await User.findByPk(id);
 
       if (!user) {
-        return HttpResponse.notFound(res, "User not found");
+        return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
-      return HttpResponse.success(res, "User retrieved successfully", { user });
+      return HttpResponse.success(res, "Usuário recuperado com sucesso", {
+        user,
+      });
     } catch (error) {
       console.error("Error retrieving user:", error);
-      return HttpResponse.serverError(res, "Error retrieving user", {
+      return HttpResponse.serverError(res, "Erro ao recuperar usuário", {
         error: error.message,
       });
     }
@@ -75,13 +90,13 @@ class UserController {
       const user = await User.findByPk(id);
 
       if (!user) {
-        return HttpResponse.notFound(res, "User not found");
+        return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
       // Update user data
       await user.update(updateData);
 
-      return HttpResponse.success(res, "User updated successfully", {
+      return HttpResponse.success(res, "Usuário atualizado com sucesso", {
         user: {
           id: user.id,
           name: user.name,
@@ -91,7 +106,7 @@ class UserController {
       });
     } catch (error) {
       console.error("Error updating user:", error);
-      return HttpResponse.serverError(res, "Error updating user", {
+      return HttpResponse.serverError(res, "Erro ao atualizar usuário", {
         error: error.message,
       });
     }
@@ -105,13 +120,16 @@ class UserController {
       const documentImageUrl = req.file?.path; // Assuming you're using multer or similar
 
       if (!documentImageUrl) {
-        return HttpResponse.badRequest(res, "Document image is required");
+        return HttpResponse.badRequest(
+          res,
+          "Imagem do documento é obrigatória"
+        );
       }
 
       const user = await User.findByPk(id);
 
       if (!user) {
-        return HttpResponse.notFound(res, "User not found");
+        return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
       // Update document information
@@ -132,12 +150,12 @@ class UserController {
         user.name
       );
 
-      return HttpResponse.success(res, "Document uploaded successfully", {
+      return HttpResponse.success(res, "Documento enviado com sucesso", {
         documentStatus: verificationResult,
       });
     } catch (error) {
       console.error("Error uploading document:", error);
-      return HttpResponse.serverError(res, "Error uploading document", {
+      return HttpResponse.serverError(res, "Erro ao enviar documento", {
         error: error.message,
       });
     }
@@ -235,7 +253,7 @@ class UserController {
       const user = await User.findByPk(id);
 
       if (!user) {
-        return HttpResponse.notFound(res, "User not found");
+        return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
       // Update social media accounts
@@ -256,13 +274,13 @@ class UserController {
 
       return HttpResponse.success(
         res,
-        `${platform} account connected successfully`
+        `Conta ${platform} conectada com sucesso`
       );
     } catch (error) {
       console.error("Error connecting social media:", error);
       return HttpResponse.serverError(
         res,
-        "Error connecting social media account",
+        "Erro ao conectar conta de rede social",
         {
           error: error.message,
         }
@@ -328,7 +346,7 @@ class UserController {
       const user = await User.findByPk(id);
 
       if (!user) {
-        return HttpResponse.notFound(res, "User not found");
+        return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
       // Update e-sports profiles
@@ -347,14 +365,14 @@ class UserController {
         profileUrl
       );
 
-      return HttpResponse.success(res, "E-sports profile validated", {
+      return HttpResponse.success(res, "Perfil de e-sports validado", {
         validationResult,
       });
     } catch (error) {
       console.error("Error validating e-sports profile:", error);
       return HttpResponse.serverError(
         res,
-        "Error validating e-sports profile",
+        "Erro ao validar perfil de e-sports",
         {
           error: error.message,
         }
@@ -404,15 +422,15 @@ class UserController {
       const user = await User.findByPk(id);
 
       if (!user) {
-        return HttpResponse.notFound(res, "User not found");
+        return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
       await user.destroy();
 
-      return HttpResponse.success(res, "User deleted successfully");
+      return HttpResponse.success(res, "Usuário deletado com sucesso");
     } catch (error) {
       console.error("Error deleting user:", error);
-      return HttpResponse.serverError(res, "Error deleting user", {
+      return HttpResponse.serverError(res, "Erro ao deletar usuário", {
         error: error.message,
       });
     }

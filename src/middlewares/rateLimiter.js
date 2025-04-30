@@ -10,7 +10,7 @@ export const apiLimiter = rateLimit({
   handler: (req, res) => {
     return HttpResponse.tooManyRequests(
       res,
-      "Too many requests, please try again later.",
+      "Muitas requisições, tente novamente mais tarde",
       { retryAfter: Math.ceil((15 * 60) / 60) } // in minutes
     );
   },

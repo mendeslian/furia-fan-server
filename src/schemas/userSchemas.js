@@ -3,18 +3,18 @@ import Joi from "joi";
 // Schema for creating a new user
 export const userCreateSchema = Joi.object({
   name: Joi.string().required().min(3).max(100).messages({
-    "string.base": "Name must be a string",
-    "string.empty": "Name is required",
-    "string.min": "Name must be at least 3 characters long",
-    "string.max": "Name cannot exceed 100 characters",
-    "any.required": "Name is required",
+    "string.base": "O nome deve ser uma string",
+    "string.empty": "O nome é obrigatório",
+    "string.min": "O nome deve ter pelo menos 3 caracteres",
+    "string.max": "O nome não pode exceder 100 caracteres",
+    "any.required": "O nome é obrigatório",
   }),
 
   email: Joi.string().email().required().messages({
-    "string.base": "Email must be a string",
-    "string.email": "Please provide a valid email address",
-    "string.empty": "Email is required",
-    "any.required": "Email is required",
+    "string.base": "O e-mail deve ser uma string",
+    "string.email": "Por favor, forneça um endereço de e-mail válido",
+    "string.empty": "O e-mail é obrigatório",
+    "any.required": "O e-mail é obrigatório",
   }),
 
   cpf: Joi.string()
@@ -22,11 +22,11 @@ export const userCreateSchema = Joi.object({
     .pattern(/^[0-9]+$/)
     .required()
     .messages({
-      "string.base": "CPF must be a string",
-      "string.length": "CPF must be exactly 11 digits",
-      "string.pattern.base": "CPF must contain only numbers",
-      "string.empty": "CPF is required",
-      "any.required": "CPF is required",
+      "string.base": "O CPF deve ser uma string",
+      "string.length": "O CPF deve ter exatamente 11 dígitos",
+      "string.pattern.base": "O CPF deve conter apenas números",
+      "string.empty": "O CPF é obrigatório",
+      "any.required": "O CPF é obrigatório",
     }),
 
   address: Joi.object({
@@ -41,14 +41,37 @@ export const userCreateSchema = Joi.object({
       .required()
       .messages({
         "string.pattern.base":
-          "Zip code must be 8 digits without special characters",
+          "O CEP deve conter 8 dígitos sem caracteres especiais",
       }),
   })
     .required()
     .messages({
-      "object.base": "Address must be an object",
-      "any.required": "Address is required",
+      "object.base": "O endereço deve ser um objeto",
+      "any.required": "O endereço é obrigatório",
     }),
+
+  esportsInterests: Joi.array().items(Joi.string()),
+  attendedEvents: Joi.array().items(
+    Joi.object({
+      name: Joi.string().required(),
+      date: Joi.date().required(),
+      location: Joi.string().required(),
+    })
+  ),
+  participatedActivities: Joi.array().items(
+    Joi.object({
+      name: Joi.string().required(),
+      date: Joi.date().required(),
+      description: Joi.string(),
+    })
+  ),
+  purchases: Joi.array().items(
+    Joi.object({
+      item: Joi.string().required(),
+      date: Joi.date().required(),
+      amount: Joi.number().positive().required(),
+    })
+  ),
 });
 
 // Schema for updating user information
@@ -66,7 +89,7 @@ export const userUpdateSchema = Joi.object({
       .pattern(/^[0-9]{8}$/)
       .messages({
         "string.pattern.base":
-          "Zip code must be 8 digits without special characters",
+          "O CEP deve conter 8 dígitos sem caracteres especiais",
       }),
   }),
   esportsInterests: Joi.array().items(Joi.string()),
@@ -94,23 +117,22 @@ export const userUpdateSchema = Joi.object({
 })
   .min(1)
   .messages({
-    "object.min": "At least one field must be provided for update",
+    "object.min": "Pelo menos um campo deve ser fornecido para atualização",
   });
 
 // Schema for document upload
 export const documentUploadSchema = Joi.object({
   documentType: Joi.string().valid("RG", "CNH").required().messages({
-    "string.base": "Document type must be a string",
-    "any.only": "Document type must be either RG or CNH",
-    "any.required": "Document type is required",
+    "string.base": "O tipo de documento deve ser uma string",
+    "any.only": "O tipo de documento deve ser RG ou CNH",
+    "any.required": "O tipo de documento é obrigatório",
   }),
 
   documentNumber: Joi.string().required().messages({
-    "string.base": "Document number must be a string",
-    "string.empty": "Document number is required",
-    "any.required": "Document number is required",
+    "string.base": "O número do documento deve ser uma string",
+    "string.empty": "O número do documento é obrigatório",
+    "any.required": "O número do documento é obrigatório",
   }),
-
   // Note: The actual document image is handled by multer middleware
 });
 
@@ -120,22 +142,22 @@ export const socialMediaConnectSchema = Joi.object({
     .valid("instagram", "twitter", "twitch", "facebook")
     .required()
     .messages({
-      "string.base": "Platform must be a string",
+      "string.base": "A plataforma deve ser uma string",
       "any.only":
-        "Platform must be one of: instagram, twitter, twitch, facebook",
-      "any.required": "Platform is required",
+        "A plataforma deve ser uma das seguintes: instagram, twitter, twitch, facebook",
+      "any.required": "A plataforma é obrigatória",
     }),
 
   accountId: Joi.string().required().messages({
-    "string.base": "Account ID must be a string",
-    "string.empty": "Account ID is required",
-    "any.required": "Account ID is required",
+    "string.base": "O ID da conta deve ser uma string",
+    "string.empty": "O ID da conta é obrigatório",
+    "any.required": "O ID da conta é obrigatório",
   }),
 
   accessToken: Joi.string().required().messages({
-    "string.base": "Access token must be a string",
-    "string.empty": "Access token is required",
-    "any.required": "Access token is required",
+    "string.base": "O token de acesso deve ser uma string",
+    "string.empty": "O token de acesso é obrigatório",
+    "any.required": "O token de acesso é obrigatório",
   }),
 });
 
@@ -145,16 +167,17 @@ export const esportsProfileSchema = Joi.object({
     .valid("liquipedia", "hltv", "vlr", "octane")
     .required()
     .messages({
-      "string.base": "Platform must be a string",
-      "any.only": "Platform must be one of: liquipedia, hltv, vlr, octane",
-      "any.required": "Platform is required",
+      "string.base": "A plataforma deve ser uma string",
+      "any.only":
+        "A plataforma deve ser uma das seguintes: liquipedia, hltv, vlr, octane",
+      "any.required": "A plataforma é obrigatória",
     }),
 
   profileUrl: Joi.string().uri().required().messages({
-    "string.base": "Profile URL must be a string",
-    "string.uri": "Profile URL must be a valid URL",
-    "string.empty": "Profile URL is required",
-    "any.required": "Profile URL is required",
+    "string.base": "A URL do perfil deve ser uma string",
+    "string.uri": "A URL do perfil deve ser uma URL válida",
+    "string.empty": "A URL do perfil é obrigatória",
+    "any.required": "A URL do perfil é obrigatória",
   }),
 });
 
