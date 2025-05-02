@@ -7,7 +7,6 @@ import HttpResponse from "../utils/httpResponse.js";
 import genAI from "../config/gemini.js";
 
 class UserController {
-  // Create a new user
   static async createUser(req, res) {
     try {
       const {
@@ -21,7 +20,6 @@ class UserController {
         purchases,
       } = req.body;
 
-      // Check if user already exists
       const existingUser = await User.findOne({
         where: {
           [Op.or]: [{ email }, { cpf }],
@@ -35,7 +33,6 @@ class UserController {
         );
       }
 
-      // Create new user
       const newUser = await User.create({
         name,
         email,
@@ -62,7 +59,6 @@ class UserController {
     }
   }
 
-  // Get user by ID
   static async getUserById(req, res) {
     try {
       const { id } = req.params;
@@ -84,7 +80,6 @@ class UserController {
     }
   }
 
-  // Update user information
   static async updateUser(req, res) {
     try {
       const { id } = req.params;
@@ -96,7 +91,6 @@ class UserController {
         return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
-      // Update user data
       await user.update(updateData);
 
       return HttpResponse.success(res, "Usuário atualizado com sucesso", {
@@ -104,7 +98,6 @@ class UserController {
           id: user.id,
           name: user.name,
           email: user.email,
-          // Include other updated fields as needed
         },
       });
     } catch (error) {
@@ -115,12 +108,11 @@ class UserController {
     }
   }
 
-  // Upload and verify document
   static async uploadDocument(req, res) {
     try {
       const { id } = req.params;
       const { documentType, documentNumber } = req.body;
-      const fileBuffer = req.file?.buffer; // Agora vem da memória
+      const fileBuffer = req.file?.buffer;
 
       if (!fileBuffer) {
         return HttpResponse.badRequest(
@@ -129,7 +121,6 @@ class UserController {
         );
       }
 
-      // Upload para o Cloudinary usando o buffer
       const uploadResult = await cloudinary.uploader.upload_stream(
         {
           folder: "documents",
@@ -161,7 +152,6 @@ class UserController {
             documentVerified: false,
           });
 
-          // Continue com a verificação Gemini normalmente
           const verificationResult = await UserController.verifyDocumentWithAI(
             user.id,
             documentImageUrl,
@@ -176,7 +166,6 @@ class UserController {
         }
       );
 
-      // Escreve o buffer no stream do Cloudinary
       uploadResult.end(fileBuffer);
     } catch (error) {
       console.error("Error uploading document:", error);
@@ -186,7 +175,6 @@ class UserController {
     }
   }
 
-  // AI document verification (simulated)
   static async verifyDocumentWithAI(
     userId,
     imageUrl,
@@ -244,7 +232,7 @@ class UserController {
 
         let responseText =
           response.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-        // Remove Markdown code block if present
+
         responseText = responseText.replace(/```json|```/g, "").trim();
         result = JSON.parse(responseText);
       } catch (aiError) {
@@ -279,7 +267,6 @@ class UserController {
     }
   }
 
-  // Connect social media account
   static async connectSocialMedia(req, res) {
     try {
       const { id } = req.params;
@@ -291,7 +278,6 @@ class UserController {
         return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
-      // Update social media accounts
       const socialMediaAccounts = { ...user.socialMediaAccounts };
       socialMediaAccounts[platform] = { accountId, connected: true };
 
@@ -299,7 +285,6 @@ class UserController {
         socialMediaAccounts,
       });
 
-      // Simulate fetching social media interactions
       await UserController.fetchSocialMediaInteractions(id, platform);
 
       return HttpResponse.success(
@@ -318,29 +303,23 @@ class UserController {
     }
   }
 
-  // Fetch social media interactions (simulated)
   static async fetchSocialMediaInteractions(userId, platform) {
     try {
-      // In a real implementation, this would call the respective social media API
-      // For demo purposes, we'll simulate the interaction data
-
       const simulatedInteractions = {
         likes: Math.floor(Math.random() * 50),
         comments: Math.floor(Math.random() * 20),
         shares: Math.floor(Math.random() * 10),
-        followingSince: new Date(Date.now() - Math.random() * 94608000000), // Random date within last 3 years
+        followingSince: new Date(Date.now() - Math.random() * 94608000000),
       };
 
       const user = await User.findByPk(userId);
 
-      // Update social media interactions
       const socialMediaInteractions = { ...user.socialMediaInteractions };
       socialMediaInteractions[platform] = {
         ...simulatedInteractions,
         lastUpdated: new Date(),
       };
 
-      // Generate interaction summary
       const interactionSummary = { ...user.interactionSummary };
       interactionSummary[platform] = {
         totalInteractions:
@@ -367,7 +346,6 @@ class UserController {
     }
   }
 
-  // Validate e-sports profile
   static async validateEsportsProfile(req, res) {
     try {
       const { id } = req.params;
@@ -379,7 +357,6 @@ class UserController {
         return HttpResponse.notFound(res, "Usuário não encontrado");
       }
 
-      // Update e-sports profiles
       const esportsProfiles = { ...user.esportsProfiles };
       esportsProfiles[platform] = profileUrl;
 
@@ -387,8 +364,6 @@ class UserController {
         esportsProfiles,
       });
 
-      // In a real implementation, you would scrape the profile and analyze with NLP
-      // For demo purposes, we'll simulate profile validation
       const validationResult = await UserController.validateProfileWithAI(
         id,
         platform,
@@ -410,12 +385,8 @@ class UserController {
     }
   }
 
-  // AI profile validation (simulated)
   static async validateProfileWithAI(userId, platform, profileUrl) {
     try {
-      // In a real implementation, this would scrape the profile and use NLP
-      // For demo purposes, we'll simulate the validation
-
       const simulatedValidation = {
         profileExists: true,
         confidence: 0.7 + Math.random() * 0.3,
@@ -426,7 +397,6 @@ class UserController {
 
       const user = await User.findByPk(userId);
 
-      // Update profile validation results
       const profileValidationResults = { ...user.profileValidationResults };
       profileValidationResults[platform] = {
         ...simulatedValidation,
@@ -444,7 +414,6 @@ class UserController {
     }
   }
 
-  // Delete user
   static async deleteUser(req, res) {
     try {
       const { id } = req.params;

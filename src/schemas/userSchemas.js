@@ -1,6 +1,5 @@
 import Joi from "joi";
 
-// Schema for creating a new user
 export const userCreateSchema = Joi.object({
   name: Joi.string().required().min(3).max(100).messages({
     "string.base": "O nome deve ser uma string",
@@ -74,7 +73,6 @@ export const userCreateSchema = Joi.object({
   ),
 });
 
-// Schema for updating user information
 export const userUpdateSchema = Joi.object({
   name: Joi.string().min(3).max(100),
   email: Joi.string().email(),
@@ -120,7 +118,6 @@ export const userUpdateSchema = Joi.object({
     "object.min": "Pelo menos um campo deve ser fornecido para atualização",
   });
 
-// Schema for document upload
 export const documentUploadSchema = Joi.object({
   documentType: Joi.string().valid("RG", "CPF").required().messages({
     "string.base": "O tipo de documento deve ser uma string",
@@ -133,10 +130,8 @@ export const documentUploadSchema = Joi.object({
     "string.empty": "O número do documento é obrigatório",
     "any.required": "O número do documento é obrigatório",
   }),
-  // Note: The actual document image is handled by multer middleware
 });
 
-// Schema for connecting social media accounts
 export const socialMediaConnectSchema = Joi.object({
   platform: Joi.string()
     .valid("instagram", "twitter", "twitch", "facebook")
@@ -153,7 +148,6 @@ export const socialMediaConnectSchema = Joi.object({
   }),
 });
 
-// Schema for validating e-sports profiles
 export const esportsProfileSchema = Joi.object({
   platform: Joi.string()
     .valid("liquipedia", "hltv", "vlr", "octane")
@@ -173,7 +167,6 @@ export const esportsProfileSchema = Joi.object({
   }),
 });
 
-// Export all schemas as a single object for convenience
 export default {
   userCreateSchema,
   userUpdateSchema,

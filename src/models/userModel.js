@@ -4,7 +4,6 @@ import sequelize from "../config/database.js";
 const User = sequelize.define(
   "User",
   {
-    // Personal Information
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -32,11 +31,10 @@ const User = sequelize.define(
       },
     },
     address: {
-      type: DataTypes.JSON, // Stores street, number, city, state, zip code
+      type: DataTypes.JSON,
       allowNull: false,
     },
 
-    // Document Verification
     documentType: {
       type: DataTypes.ENUM("RG", "CPF"),
       allowNull: true,
@@ -54,53 +52,48 @@ const User = sequelize.define(
       defaultValue: false,
     },
     documentVerificationDetails: {
-      type: DataTypes.JSON, // Stores verification results from AI
+      type: DataTypes.JSON,
       allowNull: true,
     },
-
-    // E-sports Interests and Behavior
     esportsInterests: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
     },
     attendedEvents: {
-      type: DataTypes.JSON, // Array of events with dates, names, locations
+      type: DataTypes.JSON,
       defaultValue: [],
     },
     participatedActivities: {
-      type: DataTypes.JSON, // Array of activities with details
+      type: DataTypes.JSON,
       defaultValue: [],
     },
     purchases: {
-      type: DataTypes.JSON, // Array of purchases with dates, items, amounts
+      type: DataTypes.JSON,
       defaultValue: [],
     },
 
-    // Social Media Integration
     socialMediaAccounts: {
-      type: DataTypes.JSON, // Object with platform names and account IDs
+      type: DataTypes.JSON,
       defaultValue: {},
     },
     socialMediaInteractions: {
-      type: DataTypes.JSON, // Detailed interactions with e-sports orgs
+      type: DataTypes.JSON,
       defaultValue: {},
     },
     interactionSummary: {
-      type: DataTypes.JSON, // Processed summary of interactions
+      type: DataTypes.JSON,
       defaultValue: {},
     },
 
-    // E-sports Profile Validations
     esportsProfiles: {
-      type: DataTypes.JSON, // Object with platform names and profile URLs
+      type: DataTypes.JSON,
       defaultValue: {},
     },
     profileValidationResults: {
-      type: DataTypes.JSON, // Results from AI validation of profiles
+      type: DataTypes.JSON,
       defaultValue: {},
     },
 
-    // System fields
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -116,12 +109,10 @@ const User = sequelize.define(
   }
 );
 
-// Define instance methods if needed
 User.prototype.getInteractionSummary = function () {
   return this.interactionSummary;
 };
 
-// Define class methods if needed
 User.findByDocument = async function (documentType, documentNumber) {
   return await User.findOne({
     where: {
@@ -139,7 +130,6 @@ User.findByDocument = async function (documentType, documentNumber) {
   });
 };
 
-// Sync model with database
-User.sync({ alter: true }); // Uncomment this in development to update table schema
+User.sync({ alter: true });
 
 export default User;
