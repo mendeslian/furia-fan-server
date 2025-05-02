@@ -122,9 +122,9 @@ export const userUpdateSchema = Joi.object({
 
 // Schema for document upload
 export const documentUploadSchema = Joi.object({
-  documentType: Joi.string().valid("RG", "CNH").required().messages({
+  documentType: Joi.string().valid("RG", "CPF").required().messages({
     "string.base": "O tipo de documento deve ser uma string",
-    "any.only": "O tipo de documento deve ser RG ou CNH",
+    "any.only": "O tipo de documento deve ser RG ou CPF",
     "any.required": "O tipo de documento é obrigatório",
   }),
 
@@ -143,21 +143,13 @@ export const socialMediaConnectSchema = Joi.object({
     .required()
     .messages({
       "string.base": "A plataforma deve ser uma string",
-      "any.only":
-        "A plataforma deve ser uma das seguintes: instagram, twitter, twitch, facebook",
+      "any.only": "Plataforma não suportada",
       "any.required": "A plataforma é obrigatória",
     }),
-
   accountId: Joi.string().required().messages({
     "string.base": "O ID da conta deve ser uma string",
     "string.empty": "O ID da conta é obrigatório",
     "any.required": "O ID da conta é obrigatório",
-  }),
-
-  accessToken: Joi.string().required().messages({
-    "string.base": "O token de acesso deve ser uma string",
-    "string.empty": "O token de acesso é obrigatório",
-    "any.required": "O token de acesso é obrigatório",
   }),
 });
 

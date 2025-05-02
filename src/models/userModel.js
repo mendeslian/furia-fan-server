@@ -38,7 +38,7 @@ const User = sequelize.define(
 
     // Document Verification
     documentType: {
-      type: DataTypes.ENUM("RG", "CNH"),
+      type: DataTypes.ENUM("RG", "CPF"),
       allowNull: true,
     },
     documentNumber: {

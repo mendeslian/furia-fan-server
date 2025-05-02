@@ -283,7 +283,7 @@ class UserController {
   static async connectSocialMedia(req, res) {
     try {
       const { id } = req.params;
-      const { platform, accountId, accessToken } = req.body;
+      const { platform, accountId } = req.body;
 
       const user = await User.findByPk(id);
 
@@ -299,13 +299,8 @@ class UserController {
         socialMediaAccounts,
       });
 
-      // In a real implementation, you would use the accessToken to fetch interactions
-      // For demo purposes, we'll simulate fetching social media interactions
-      await UserController.fetchSocialMediaInteractions(
-        id,
-        platform,
-        accessToken
-      );
+      // Simulate fetching social media interactions
+      await UserController.fetchSocialMediaInteractions(id, platform);
 
       return HttpResponse.success(
         res,
@@ -324,7 +319,7 @@ class UserController {
   }
 
   // Fetch social media interactions (simulated)
-  static async fetchSocialMediaInteractions(userId, platform, accessToken) {
+  static async fetchSocialMediaInteractions(userId, platform) {
     try {
       // In a real implementation, this would call the respective social media API
       // For demo purposes, we'll simulate the interaction data
