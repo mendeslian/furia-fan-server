@@ -1,8 +1,8 @@
 import express from "express";
-import chatRoutes from "./chat.route.js";
+import userRoutes from "./user.route.js";
 
 const router = express.Router();
 
-router.use("/chat", chatRoutes);
+router.use("/user", userRoutes);
 
 export default router;
