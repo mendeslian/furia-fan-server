@@ -7,7 +7,7 @@ import { apiLimiter } from "./middlewares/rateLimiter.js";
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000", "https://furia-fan-web-app.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
