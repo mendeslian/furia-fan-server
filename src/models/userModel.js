@@ -34,7 +34,6 @@ const User = sequelize.define(
       type: DataTypes.JSON,
       allowNull: false,
     },
-
     documentType: {
       type: DataTypes.ENUM("RG", "CPF"),
       allowNull: true,
@@ -71,7 +70,6 @@ const User = sequelize.define(
       type: DataTypes.JSON,
       defaultValue: [],
     },
-
     socialMediaAccounts: {
       type: DataTypes.JSON,
       defaultValue: {},
@@ -84,7 +82,6 @@ const User = sequelize.define(
       type: DataTypes.JSON,
       defaultValue: {},
     },
-
     esportsProfiles: {
       type: DataTypes.JSON,
       defaultValue: {},
@@ -93,7 +90,6 @@ const User = sequelize.define(
       type: DataTypes.JSON,
       defaultValue: {},
     },
-
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
