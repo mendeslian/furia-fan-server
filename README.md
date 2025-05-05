@@ -23,7 +23,7 @@ O **Furia Fan Server** é uma API RESTful desenvolvida com Node.js e Express que
 
 ```bash
 git clone https://github.com/mendeslian/furia-fan-server.git
-cd furia-bot-server
+cd furia-fan-server
 ```
 
 2. **Instale as dependências:**
