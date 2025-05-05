@@ -19,14 +19,14 @@ O **Furia Fan Server** é uma API RESTful desenvolvida com Node.js e Express que
 
 ## 🔧 Instalação
 
-1. Clone o repositório:
+1. **Clone o repositório:**
 
 ```bash
 git clone https://github.com/mendeslian/furia-fan-server.git
-cd furia-fan-server
+cd furia-bot-server
 ```
 
-2. Instale as dependências:
+2. **Instale as dependências:**
 
 ```bash
 npm install
@@ -34,23 +34,35 @@ npm install
 yarn install
 ```
 
-3. Crie um arquivo `.env` na raiz do projeto e configure as variáveis de ambiente:
+3. **Configure as variáveis de ambiente:**  
+   Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
-```env
+```bash
 PORT=
 GEMINI_API_KEY=
 DB_CONNECTION_STRING=
 CLOUDINARY_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
+# Adicione outras variáveis necessárias
 ```
 
-4. Inicie o servidor:
+4. **Inicie o servidor:**
 
 ```bash
 npm start
 # ou
 yarn start
+```
+
+> O servidor estará disponível em `http://localhost:3001`
+
+5. **Para ambiente de desenvolvimento:**
+
+```bash
+npm run dev
+# ou
+yarn dev
 ```
 
 ## 🛠️ Estrutura do Projeto
